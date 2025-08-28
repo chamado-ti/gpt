@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chamado TI - Esquadromil</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #24135F; /* Pantone 7687 C */
+      color: #fff;
+      text-align: center;
+      padding: 0;
+    }
+
+    header {
+      background: #fff;
+      padding: 20px;
+    }
+
+    header img {
+      max-height: 80px;
+    }
+
+    h1 {
+      margin: 30px 0 20px;
+      font-size: 28px;
+    }
+
+    form {
+      background: #ffffff20;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: 20px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+
+    input[type="text"] {
+      box-sizing: border-box;
+      height: 42px;
+    }
+
+    button {
+      margin-top: 20px;
+      background-color: #ffffff;
+      color: #3d32f4;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #mensagem {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Chat Styles */
+    #chatContainer {
+      max-width: 500px;
+      margin: 40px auto;
+      text-align: left;
+    }
+
+    #chat {
+      background: #ffffff20;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      height: 300px;
+      overflow-y: scroll;
+      padding: 10px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    #userInput {
+      width: 70%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    #sendBtn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #ffffff;
+      color: #3d32f4;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .user {
+      color: #00BFFF;
+    }
+
+    .gpt {
+      color: #00FF88;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="fundo.esquadromil.png" alt="Logo Esquadromil">
+  </header>
+
+  <h1>TI - Abertura de Chamados</h1>
+
+  <form id="form">
+    <label for="nome">Nome:</label>
+    <input type="text" name="nome" id="nome" required />
+
+    <label for="setor">Setor:</label>
+    <select name="setor" id="setor" required>
+      <option value="">Selecione</option>
+      <option>TI</option>
+      <option>Produção</option>
+      <option>Financeiro</option>
+      <option>Processos</option>
+      <option>Compras</option>
+      <option>RH</option>
+      <option>DP</option>
+      <option>Contabilidade</option>
+      <option>Comercial</option>
+      <option>Televendas</option>
+      <option>Logística</option>
+      <option>Marketing</option>
+      <option>Diretoria</option>
+    </select>
+
+    <label for="problema">Tipo de Problema:</label>
+    <select name="problema" id="problema" required>
+      <option value="">Selecione</option>
+      <option>Falha de impressão</option>
+      <option>Impressora travada</option>
+      <option>Abertura de tabela de preço</option>
+      <option>Precificação de produtos</option>
+      <option>Computador travando</option>
+      <option>Problemas de rede</option>
+      <option>Sistema indisponível</option>
+      <option value="outros">Outros</option>
+    </select>
+
+    <div id="outro-problema" class="hidden">
+      <label for="outro">Descreva o problema:</label>
+      <textarea name="outro" id="outro" rows="4"></textarea>
+    </div>
+
+    <label for="urgencia">Urgência:</label>
+    <select name="urgencia" id="urgencia" required>
+      <option value="">Selecione</option>
+      <option>Baixa</option>
+      <option>Média</option>
+      <option>Alta</option>
+    </select>
+
+    <button type="submit">Enviar Chamado</button>
+
+    <div id="mensagem"></div>
+  </form>
+
+  <!-- Chat GPT Section -->
+  <div id="chatContainer">
+    <h2>Chat GPT no site</h2>
+    <div id="chat"></div>
+    <input type="text" id="userInput" placeholder="Digite sua pergunta...">
+    <button id="sendBtn">Enviar</button>
+  </div>
+
+  <script>
+    // Form submission script
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw8bt5spo8b1Ve77XhYHC0N9jiMH6c-je-84C1zvsld1gHCcpUxAm-K9I1ySlW4huiJ/exec';
+    const form = document.getElementById('form');
+    const outroInput = document.getElementById('outro-problema');
+    const problemaSelect = document.getElementById('problema');
+    const mensagem = document.getElementById('mensagem');
+
+    const tempos = {
+      "Falha de impressão": "Em até 10 minutos nossa equipe entrará em contato ou resolverá o problema.",
+      "Impressora travada": "Em até 10 minutos nossa equipe entrará em contato ou resolverá o problema.",
+      "Abertura de tabela de preço": "Em até 5 minutos nossa equipe entrará em contato ou resolverá o problema.",
+      "Precificação de produtos": "Em até 20 minutos nossa equipe entrará em contato ou resolverá o problema.",
+      "Computador travando": "Em até 20 minutos nossa equipe entrará em contato ou resolverá o problema.",
+      "Problemas de rede": "Em até 20 minutos nossa equipe entrará em contato ou resolverá o problema.",
+      "Sistema indisponível": "Em até 30 minutos nossa equipe entrará em contato ou resolverá o problema.",
+      "outros": "Em até 15 minutos nossa equipe entrará em contato ou resolverá o problema."
+    };
+
+    problemaSelect.addEventListener('change', () => {
+      if (problemaSelect.value === 'outros') {
+        outroInput.classList.remove('hidden');
+      } else {
+        outroInput.classList.add('hidden');
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: new URLSearchParams(data),
+        });
+
+        const result = await response.json();
+
+        if (result.result === "success") {
+          const problema = problemaSelect.value;
+          let tempoMsg = tempos[problema] || "";
+
+          mensagem.innerHTML = `
+            <div style="color:#00ff88;">Chamado enviado com sucesso!</div>
+            <div style="color:#FFD700; margin-top:5px;">${tempoMsg}</div>
+          `;
+          form.reset();
+          outroInput.classList.add("hidden");
+
+          setTimeout(() => {
+            mensagem.innerHTML = "";
+          }, 5000);
+        } else {
+          throw new Error("Erro desconhecido");
+        }
+      } catch (err) {
+        mensagem.textContent = "Erro ao enviar chamado. Tente novamente.";
+        mensagem.style.color = "#ff4444";
+        setTimeout(() => {
+          mensagem.textContent = "";
+        }, 5000);
+      }
+    });
+
+    // Chat GPT script
+    const chatDiv = document.getElementById("chat");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    sendBtn.addEventListener("click", async () => {
+      const message = userInput.value;
+      if (!message) return;
+
+      appendMessage("Você: " + message, "user");
+      userInput.value = "";
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        appendMessage("GPT: " + data.answer, "gpt");
+      } catch (err) {
+        appendMessage("Erro ao conectar com o servidor GPT.", "gpt");
+      }
+    });
+
+    function appendMessage(msg, cls) {
+      const p = document.createElement("p");
+      p.textContent = msg;
+      p.className = cls;
+      chatDiv.appendChild(p);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+  </script>
+</body>
+</html>
